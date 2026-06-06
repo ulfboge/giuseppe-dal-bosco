@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Opportunities — Giuseppe Dal Bosco</title>
+  <meta name="description" content="Pre-filtered job searches and direct career pages for senior forestry, restoration, and natural resource management roles worldwide." />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ============================================================
+       jobs.html — page-specific styles
+       All base variables, reset, nav, footer inherited from style.css
+       ============================================================ */
+
+    /* ---- Jobs hero (compact, not full-bleed like main hero) ---- */
+    .jobs-hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+      color: var(--white);
+      padding: 3.5rem 0 3rem;
+      text-align: center;
+    }
+    .jobs-hero .section-label {
+      color: var(--green-light);
+      margin-bottom: 0.6rem;
+    }
+    .jobs-hero h1 {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.9rem;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+    .jobs-hero .subtitle {
+      font-size: 1rem;
+      color: var(--green-pale);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ---- Nav active state for Jobs link ---- */
+    nav ul a.nav-active {
+      color: var(--green-light);
+      border-bottom: 2px solid var(--green-light);
+      padding-bottom: 1px;
+    }
+
+    /* ---- Section shared ---- */
+    .jobs-section {
+      padding: 4rem 0;
+    }
+    .jobs-section.alt-bg {
+      background: var(--white);
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+    .section-header p {
+      color: var(--text-mid);
+      max-width: 600px;
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Search cards grid ---- */
+    .search-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .search-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--green-light);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.25rem 1rem;
+      box-shadow: var(--shadow);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .search-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .search-card-source {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 0.5rem;
+    }
+    .search-card-title {
+      font-size: 0.975rem;
+      font-weight: 600;
+      color: var(--green-dark);
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+    .search-card-desc {
+      font-size: 0.83rem;
+      color: var(--text-mid);
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+    .search-card-cta {
+      margin-top: 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--green-mid);
+      letter-spacing: 0.01em;
+    }
+
+    /* ---- Org category heading ---- */
+    .org-category-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 2.5rem 0 1rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--green-mid);
+    }
+    .org-category-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .org-category-label:first-of-type {
+      margin-top: 0;
+    }
+
+    /* ---- Org cards grid ---- */
+    .org-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .org-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .org-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      text-decoration: none;
+      color: inherit;
+    }
+    .alt-bg .org-card {
+      background: var(--sand);
+    }
+
+    .org-card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.4rem;
+    }
+    .org-card-desc {
+      font-size: 0.83rem;
+      color: var(--text-mid);
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+    .org-card-link {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--green-mid);
+    }
+
+    /* ---- Keywords section ---- */
+    .keyword-intro {
+      color: var(--text-mid);
+      max-width: 620px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .keyword-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .keyword-pill {
+      position: relative;
+      display: inline-block;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      border: 1px solid #b7d9c6;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+      user-select: none;
+    }
+    .keyword-pill:hover {
+      background: #c5ead0;
+      transform: translateY(-1px);
+    }
+    .keyword-pill:active {
+      transform: translateY(0);
+    }
+
+    /* Copied tooltip */
+    .keyword-pill .tooltip {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green-dark);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .keyword-pill .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 4px solid transparent;
+      border-top-color: var(--green-dark);
+    }
+    .keyword-pill.copied .tooltip {
+      opacity: 1;
+    }
+
+    /* ---- Jobs footer ---- */
+    .jobs-footer {
+      background: #111;
+      color: var(--text-light);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+    }
+    .jobs-footer a {
+      color: var(--green-light);
+      font-weight: 500;
+    }
+    .jobs-footer a:hover {
+      color: var(--white);
+      text-decoration: none;
+    }
+    .jobs-footer .back-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 600px) {
+      nav ul { gap: 0.65rem; }
+      nav ul a { font-size: 0.78rem; }
+      .jobs-hero { padding: 2.5rem 0 2rem; }
+      .search-grid { grid-template-columns: 1fr; }
+      .org-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ Navigation ============ -->
+  <nav>
+    <div class="container">
+      <a href="index.html" class="nav-name" style="color: var(--white); font-weight: 700; font-size: 1rem; letter-spacing: 0.02em; text-decoration: none;">Giuseppe Dal Bosco</a>
+      <ul>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#experience">Experience</a></li>
+        <li><a href="jobs.html" class="nav-active">Jobs</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ============ Hero ============ -->
+  <header class="jobs-hero">
+    <div class="container">
+      <span class="section-label">Open Positions</span>
+      <h1>Job Opportunities</h1>
+      <p class="subtitle">Pre-filtered searches and direct career pages for senior forestry, restoration, and NRM roles worldwide.</p>
+    </div>
+  </header>
+
+  <!-- ============ LinkedIn Quick Searches ============ -->
+  <section class="jobs-section">
+    <div class="container">
+
+      <div class="section-header">
+        <span class="section-label">Quick Search</span>
+        <h2>LinkedIn Job Searches</h2>
+        <p>Each card opens a pre-filtered LinkedIn search scoped to the last 30 days. Click to browse current openings — update the date filter as needed for broader results.</p>
+      </div>
+
+      <div class="search-grid">
+
+        <a class="search-card"
+           href="https://www.linkedin.com/jobs/search/?keywords=Forest+Landscape+Restoration&f_TPR=r2592000"
+           target="_blank" rel="noopener">
+          <span class="search-card-source">LinkedIn &middot; Worldwide</span>
+          <span class="search-card-title">Forest Landscape Restoration</span>
+          <span class="search-card-desc">Programme and specialist roles in landscape-scale restoration initiatives — NGO, multilateral, and private sector.</span>
+          <span class="search-card-cta">Search now &rarr;</span>
+        </a>
+
+        <a class="search-card"
+           href="https://www.linkedin.com/jobs/search/?keywords=Senior+Forestry+Specialist+OR+Forestry+Advisor&f_TPR=r2592000"
+           target="_blank" rel="noopener">
+          <span class="search-card-source">LinkedIn &middot; Worldwide</span>
+          <span class="search-card-title">Senior Forestry Specialist / Advisor</span>
+          <span class="search-card-desc">Senior-level technical and advisory roles across sustainable forest management, operations, and policy.</span>
+          <span class="search-card-cta">Search now &rarr;</span>
+        </a>
+
+        <a class="search-card"
+           href="https://www.linkedin.com/jobs/search/?keywords=Restoration+Programme+Manager+OR+Reforestation+Manager&f_TPR=r2592000"
+           target="_blank" rel="noopener">
+          <span class="search-card-source">LinkedIn &middot; Worldwide</span>
+          <span class="search-card-title">Restoration / Reforestation Programme Manager</span>
+          <span class="search-card-desc">Programme management roles leading restoration or reforestation operations at scale.</span>
+          <span class="search-card-cta">Search now &rarr;</span>
+        </a>
+
+        <a class="search-card"
+           href="https://www.linkedin.com/jobs/search/?keywords=Nature+Based+Solutions+Forestry&f_TPR=r2592000"
+           target="_blank" rel="noopener">
+          <span class="search-card-source">LinkedIn &middot; Worldwide</span>
+          <span class="search-card-title">Nature-Based Solutions — Forestry</span>
+          <span class="search-card-desc">NbS technical and leadership roles with a forestry or land-use component — increasingly in demand across the sector.</span>
+          <span class="search-card-cta">Search now &rarr;</span>
+        </a>
+
+        <a class="search-card"
+           href="https://www.linkedin.com/jobs/search/?keywords=Forest+Carbon+Specialist+OR+Carbon+Forestry&f_TPR=r2592000"
+           target="_blank" rel="noopener">
+          <span class="search-card-source">LinkedIn &middot; Worldwide</span>
+          <span class="search-card-title">Forest Carbon Specialist</span>
+          <span class="search-card-desc">Technical roles in forest carbon inventory, REDD+, carbon project development, and MRV frameworks.</span>
+          <span class="search-card-cta">Search now &rarr;</span>
+        </a>
+
+        <a class="search-card"
+           href="https://www.linkedin.com/jobs/search/?keywords=Natural+Resource+Management+Advisor+OR+Agroforestry+Advisor&f_TPR=r2592000"
+           target="_blank" rel="noopener">
+          <span class="search-card-source">LinkedIn &middot; Worldwide</span>
+          <span class="search-card-title">NRM / Agroforestry Advisor</span>
+          <span class="search-card-desc">Advisory roles in natural resource management and agroforestry — frequently with development agency or NGO mandates.</span>
+          <span class="search-card-cta">Search now &rarr;</span>
+        </a>
+
+        <a class="search-card"
+           href="https://www.linkedin.com/jobs/search/?keywords=FSC+Certification+Specialist+OR+Forest+Certification&f_TPR=r2592000"
+           target="_blank" rel="noopener">
+          <span class="search-card-source">LinkedIn &middot; Worldwide</span>
+          <span class="search-card-title">FSC / Forest Certification Specialist</span>
+          <span class="search-card-desc">Certification, compliance, and standards roles — FSC FM, CoC, and related sustainability schemes.</span>
+          <span class="search-card-cta">Search now &rarr;</span>
+        </a>
+
+        <a class="search-card"
+           href="https://reliefweb.int/jobs?search=forestry+restoration"
+           target="_blank" rel="noopener">
+          <span class="search-card-source">ReliefWeb &middot; Worldwide</span>
+          <span class="search-card-title">Environment &amp; Forestry — NGO / Development</span>
+          <span class="search-card-desc">ReliefWeb aggregates humanitarian and development sector postings — strong coverage of UN, NGO, and donor-funded forestry roles.</span>
+          <span class="search-card-cta">Search now &rarr;</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Target Organizations ============ -->
+  <section class="jobs-section alt-bg">
+    <div class="container">
+
+      <div class="section-header">
+        <span class="section-label">Target Organizations</span>
+        <h2>Direct Career Pages</h2>
+        <p>Organisations that regularly post senior forestry, restoration, and NRM roles. Bookmark the ones most relevant to you and check them directly — some postings never reach LinkedIn.</p>
+      </div>
+
+      <!-- Restoration & Conservation -->
+      <div class="org-category-label">Restoration &amp; Conservation</div>
+      <div class="org-grid">
+
+        <a class="org-card" href="https://www.weforest.org/about-us/jobs" target="_blank" rel="noopener">
+          <span class="org-card-name">WeForest</span>
+          <span class="org-card-desc">Large-scale reforestation NGO across Africa and Asia.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://www.cifor-icraf.org/careers/" target="_blank" rel="noopener">
+          <span class="org-card-name">CIFOR-ICRAF</span>
+          <span class="org-card-desc">World's leading forest and agroforestry research centre.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://www.wri.org/careers" target="_blank" rel="noopener">
+          <span class="org-card-name">WRI</span>
+          <span class="org-card-desc">Global think-tank with strong forest landscape restoration programmes.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://careers.worldwildlife.org/" target="_blank" rel="noopener">
+          <span class="org-card-name">WWF</span>
+          <span class="org-card-desc">Conservation giant with forestry, landscape, and NbS programmes worldwide.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://preferredbynature.org/careers" target="_blank" rel="noopener">
+          <span class="org-card-name">Preferred by Nature</span>
+          <span class="org-card-desc">FSC, carbon, and sustainability certification advisory.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://www.iucn.org/vacancies" target="_blank" rel="noopener">
+          <span class="org-card-name">IUCN</span>
+          <span class="org-card-desc">Forests, ecosystems, and biodiversity conservation programmes.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+      </div>
+
+      <!-- Forest Carbon & Restoration Companies -->
+      <div class="org-category-label">Forest Carbon &amp; Restoration Companies</div>
+      <div class="org-grid">
+
+        <a class="org-card" href="https://www.terraformation.com/careers" target="_blank" rel="noopener">
+          <span class="org-card-name">Terraformation</span>
+          <span class="org-card-desc">Native forest restoration at scale — field operations and technical roles.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://www.southpole.com/careers" target="_blank" rel="noopener">
+          <span class="org-card-name">South Pole</span>
+          <span class="org-card-desc">Carbon project development and sustainability consulting.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://ecologi.com/careers" target="_blank" rel="noopener">
+          <span class="org-card-name">Ecologi</span>
+          <span class="org-card-desc">Tree planting and carbon platform — restoration operations.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://www.rainforest-alliance.org/careers/" target="_blank" rel="noopener">
+          <span class="org-card-name">Rainforest Alliance</span>
+          <span class="org-card-desc">Forest certification and sustainable agriculture — M&amp;E and programme roles.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+      </div>
+
+      <!-- International & Multilateral -->
+      <div class="org-category-label">International &amp; Multilateral</div>
+      <div class="org-grid">
+
+        <a class="org-card" href="https://www.fao.org/employment/en/" target="_blank" rel="noopener">
+          <span class="org-card-name">FAO</span>
+          <span class="org-card-desc">UN Food and Agriculture Organization — regular senior forestry postings.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://efi.int/jobs" target="_blank" rel="noopener">
+          <span class="org-card-name">European Forest Institute</span>
+          <span class="org-card-desc">European forestry research and policy — Bonn-based, strong for Germany-based candidates.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://careers.un.org/" target="_blank" rel="noopener">
+          <span class="org-card-name">UN Careers</span>
+          <span class="org-card-desc">All UN system jobs — filter by UNEP, UNDP, or keyword forestry / NRM.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://www.giz.de/en/html/jobs.html" target="_blank" rel="noopener">
+          <span class="org-card-name">GIZ</span>
+          <span class="org-card-desc">German development agency — senior forestry and NRM roles in international projects.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://www.worldbank.org/en/about/careers" target="_blank" rel="noopener">
+          <span class="org-card-name">World Bank</span>
+          <span class="org-card-desc">Forest investment and NRM advisory — REDD+, land use, forest finance.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+        <a class="org-card" href="https://www.iadb.org/en/careers" target="_blank" rel="noopener">
+          <span class="org-card-name">IDB</span>
+          <span class="org-card-desc">Strong Latin America forestry footprint — technical and advisory roles.</span>
+          <span class="org-card-link">View careers &rarr;</span>
+        </a>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ Keywords ============ -->
+  <section class="jobs-section">
+    <div class="container">
+
+      <div class="section-header">
+        <span class="section-label">Search Terms</span>
+        <h2>Search Terms to Use</h2>
+      </div>
+
+      <p class="keyword-intro">Paste these into any job board. Avoid searching just "forester" — the best senior roles use programme, advisor, or lead titles. Click any term to copy it to your clipboard.</p>
+
+      <div class="keyword-grid">
+
+        <span class="keyword-pill" data-text="Forest Landscape Restoration Manager">
+          Forest Landscape Restoration Manager
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Senior Forestry Advisor">
+          Senior Forestry Advisor
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Forestry &amp; Conservation Specialist">
+          Forestry &amp; Conservation Specialist
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Restoration Programme Manager">
+          Restoration Programme Manager
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Forest Operations &amp; Sustainability Lead">
+          Forest Operations &amp; Sustainability Lead
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Natural Resource Management Advisor">
+          Natural Resource Management Advisor
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Landscape Restoration Lead">
+          Landscape Restoration Lead
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Agroforestry Advisor">
+          Agroforestry Advisor
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Nature-Based Solutions Technical Lead">
+          Nature-Based Solutions Technical Lead
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Carbon Forestry Specialist">
+          Carbon Forestry Specialist
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="FSC Forest Management Specialist">
+          FSC Forest Management Specialist
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Reforestation Programme Manager">
+          Reforestation Programme Manager
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Forest M&amp;E Specialist">
+          Forest M&amp;E Specialist
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Tropical Forestry Specialist">
+          Tropical Forestry Specialist
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Forest Investment Advisor">
+          Forest Investment Advisor
+          <span class="tooltip">Copied!</span>
+        </span>
+
+        <span class="keyword-pill" data-text="Forestry Programme Officer">
+          Forestry Programme Officer
+          <span class="tooltip">Copied!</span>
+        </span>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ Footer ============ -->
+  <footer class="jobs-footer">
+    <p>Giuseppe Dal Bosco &middot; Forestry Specialist &amp; Advisor &middot; Hasbergen, Germany</p>
+    <a href="index.html" class="back-link">&larr; Back to profile</a>
+  </footer>
+
+  <!-- ============ Clipboard script ============ -->
+  <script>
+    document.querySelectorAll('.keyword-pill').forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        // Read plain text from data attribute to avoid HTML entities in clipboard
+        var text = pill.getAttribute('data-text');
+        // Decode any HTML entities in the data attribute
+        var tmp = document.createElement('textarea');
+        tmp.innerHTML = text;
+        var decoded = tmp.value;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(decoded).then(function() {
+            showCopied(pill);
+          }).catch(function() {
+            fallbackCopy(decoded, pill);
+          });
+        } else {
+          fallbackCopy(decoded, pill);
+        }
+      });
+    });
+
+    function fallbackCopy(text, pill) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+      showCopied(pill);
+    }
+
+    function showCopied(pill) {
+      pill.classList.add('copied');
+      setTimeout(function() {
+        pill.classList.remove('copied');
+      }, 1800);
+    }
+  </script>
+
+</body>
+</html>

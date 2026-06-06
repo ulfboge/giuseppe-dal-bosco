@@ -1,0 +1,314 @@
+/* ============================================================
+   Giuseppe Dal Bosco — Job Search Portfolio
+   style.css
+   ============================================================ */
+
+:root {
+  --green-dark:   #1a3a2a;
+  --green-mid:    #2d6a4f;
+  --green-light:  #52b788;
+  --green-pale:   #d8f3dc;
+  --sand:         #f8f4ed;
+  --text-dark:    #1c1c1c;
+  --text-mid:     #4a4a4a;
+  --text-light:   #777777;
+  --white:        #ffffff;
+  --border:       #dde8e2;
+  --shadow:       0 2px 12px rgba(0,0,0,0.08);
+  --radius:       8px;
+  --max-width:    860px;
+  --font-sans:    'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ---- Reset ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-dark);
+  background: var(--sand);
+}
+a { color: var(--green-mid); text-decoration: none; }
+a:hover { color: var(--green-light); text-decoration: underline; }
+img { max-width: 100%; display: block; }
+
+/* ---- Layout ---- */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+section { padding: 4rem 0; }
+section:nth-child(even) { background: var(--white); }
+
+/* ---- Navigation ---- */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--green-dark);
+  padding: 0.75rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+nav .nav-name {
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+nav ul a {
+  color: var(--green-pale);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+nav ul a:hover { color: var(--white); text-decoration: none; }
+
+/* ---- Hero ---- */
+.hero {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+  color: var(--white);
+  padding: 5rem 0 4rem;
+  text-align: center;
+}
+.hero h1 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+.hero .subtitle {
+  font-size: 1.1rem;
+  color: var(--green-pale);
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+.hero .badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+.badge {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: var(--white);
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary {
+  background: var(--green-light);
+  color: var(--green-dark);
+  margin-right: 0.75rem;
+}
+.btn-primary:hover { background: #63d09a; text-decoration: none; color: var(--green-dark); }
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid rgba(255,255,255,0.6);
+}
+.btn-outline:hover { border-color: var(--white); text-decoration: none; color: var(--white); }
+
+/* ---- Section headings ---- */
+.section-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--green-mid);
+  margin-bottom: 0.4rem;
+}
+h2 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-bottom: 0.5rem;
+}
+h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-bottom: 0.4rem;
+}
+.section-intro {
+  color: var(--text-mid);
+  max-width: 640px;
+  margin-bottom: 2.5rem;
+}
+
+/* ---- About ---- */
+#about p {
+  color: var(--text-mid);
+  max-width: 680px;
+  font-size: 1.05rem;
+}
+
+/* ---- Strengths grid ---- */
+.strengths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+.strength-card {
+  background: var(--sand);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--green-light);
+  padding: 1.25rem;
+  border-radius: var(--radius);
+}
+.strength-card h3 { font-size: 0.95rem; margin-bottom: 0.35rem; }
+.strength-card p { font-size: 0.875rem; color: var(--text-mid); }
+
+/* ---- Experience themes ---- */
+.experience-list { margin-top: 1rem; }
+.exp-item {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 1.25rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+.exp-item:last-child { border-bottom: none; }
+.exp-meta { color: var(--text-light); font-size: 0.85rem; line-height: 1.5; }
+.exp-meta strong { display: block; color: var(--green-dark); font-size: 0.9rem; margin-bottom: 0.2rem; }
+.exp-body h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+.exp-body p { font-size: 0.9rem; color: var(--text-mid); }
+
+/* ---- Languages ---- */
+.lang-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.lang-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  min-width: 150px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.lang-card .lang-name { font-weight: 700; font-size: 1rem; color: var(--green-dark); }
+.lang-card .lang-level { font-size: 0.8rem; color: var(--text-light); margin-top: 0.2rem; }
+.lang-card .lang-dots { margin-top: 0.5rem; }
+.dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin: 0 2px;
+}
+.dot.filled { background: var(--green-mid); }
+.dot.empty { background: var(--border); }
+
+/* ---- Target roles ---- */
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.role-tag {
+  background: var(--green-pale);
+  color: var(--green-dark);
+  border: 1px solid #b7d9c6;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* ---- Regions ---- */
+.regions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.region-pill {
+  background: var(--green-dark);
+  color: var(--white);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* ---- Contact ---- */
+#contact {
+  background: var(--green-dark);
+  color: var(--white);
+}
+#contact .section-label { color: var(--green-light); }
+#contact h2 { color: var(--white); }
+#contact p { color: var(--green-pale); max-width: 520px; }
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--white);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.contact-link:hover { background: rgba(255,255,255,0.15); color: var(--white); text-decoration: none; }
+
+/* ---- Footer ---- */
+footer {
+  background: #111;
+  color: var(--text-light);
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.8rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  nav ul { gap: 0.75rem; }
+  .exp-item { grid-template-columns: 1fr; }
+  .exp-meta { margin-bottom: 0.25rem; }
+  .hero { padding: 3.5rem 0 3rem; }
+}
