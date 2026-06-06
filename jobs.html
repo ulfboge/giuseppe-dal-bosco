@@ -498,7 +498,7 @@
         var jobs = [];
         arrays.forEach(function(arr) {
           arr.forEach(function(job) {
-            if (!seen[job.id]) {
+            if (!seen[job.id] && isRelevant(job)) {
               seen[job.id] = true;
               jobs.push(job);
             }
@@ -547,6 +547,25 @@
         + salaryHtml
         + '</div>'
         + '</a>';
+    }
+
+    /* ---- Title relevance filter ---- */
+    var TITLE_TERMS = [
+      'forest', 'forestry', 'forester',
+      'restor', 'reforest', 'afforest',
+      'conservat', 'conservation',
+      'silvicultur', 'agroforest', 'woodland',
+      'natural resource', 'landscape restor',
+      'nature-based', 'nbs', 'redd',
+      'carbon project', 'forest carbon',
+      'biodiversity', 'habitat restor',
+      'plantation manager', 'plantation specialist',
+      'land restor', 'ecosystem restor',
+    ];
+
+    function isRelevant(job) {
+      var title = (job.title || '').toLowerCase();
+      return TITLE_TERMS.some(function(term) { return title.indexOf(term) !== -1; });
     }
 
     function esc(str) {
