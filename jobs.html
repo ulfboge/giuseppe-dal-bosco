@@ -288,6 +288,31 @@
       .search-grid { grid-template-columns: 1fr; }
       .org-grid { grid-template-columns: 1fr; }
     }
+
+    /* ---- Date-range toggle ---- */
+    .date-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .df-btn {
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text-mid);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .df-btn:hover { border-color: var(--green-mid); color: var(--green-dark); }
+    .df-btn[aria-pressed="true"] {
+      background: var(--green-mid);
+      color: var(--white);
+      border-color: var(--green-mid);
+    }
   </style>
 </head>
 <body>
@@ -321,7 +346,13 @@
       <div class="section-header">
         <span class="section-label">Quick Search</span>
         <h2>LinkedIn Job Searches</h2>
-        <p>Each card opens a pre-filtered LinkedIn search scoped to the last 30 days. Click to browse current openings — update the date filter as needed for broader results.</p>
+        <p>Each card opens a pre-filtered LinkedIn search. Choose how far back to look, then click any card.</p>
+        <div class="date-filter" role="group" aria-label="Date range">
+          <button class="df-btn" data-tpr="">Any time</button>
+          <button class="df-btn" data-tpr="r2592000" aria-pressed="true">Past month</button>
+          <button class="df-btn" data-tpr="r604800">Past week</button>
+          <button class="df-btn" data-tpr="r86400">Past 24 h</button>
+        </div>
       </div>
 
       <div class="search-grid">
@@ -675,6 +706,30 @@
         pill.classList.remove('copied');
       }, 1800);
     }
+
+    /* ---- Date-range toggle ---- */
+    (function () {
+      const buttons = document.querySelectorAll('.df-btn');
+      const cards   = document.querySelectorAll('a.search-card[href*="linkedin.com"]');
+
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          buttons.forEach(function (b) { b.removeAttribute('aria-pressed'); });
+          btn.setAttribute('aria-pressed', 'true');
+
+          const tpr = btn.dataset.tpr;
+          cards.forEach(function (card) {
+            const url = new URL(card.href);
+            if (tpr) {
+              url.searchParams.set('f_TPR', tpr);
+            } else {
+              url.searchParams.delete('f_TPR');
+            }
+            card.href = url.toString();
+          });
+        });
+      });
+    })();
   </script>
 
 </body>
