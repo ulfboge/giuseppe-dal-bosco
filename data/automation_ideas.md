@@ -102,13 +102,25 @@ Run manually (`python scripts/check_feeds.py`) or via cron/GitHub Actions.
 
 ---
 
-### 2.3 Static Site with GitHub Pages
+### 2.3 Static Site with GitHub Pages ✅ DONE
 
-Enable GitHub Pages on the repository (`Settings > Pages > Deploy from branch: main, /root`). The `index.html` file becomes a live webpage at `https://[username].github.io/[repo-name]`.
+GitHub Pages is live at **https://ulfboge.github.io/giuseppe-dal-bosco/**
 
-No build step required — pure HTML/CSS.
+- `index.html` — professional profile page
+- `jobs.html` — live job feed (see section 2.4 below)
+- `.nojekyll` added to bypass Jekyll processing
+- Custom domain (e.g. giuseppedalbosco.com) can still be added via one DNS record
 
-Add a custom domain later if desired (e.g. giuseppedalbosco.com → 1 DNS record).
+### 2.4 Live Job Feed via Adzuna API ✅ DONE
+
+`jobs.html` fetches real job postings on page load using the **Adzuna free API** (250 calls/day). This is more effective than RSS feeds (2.2) for this use case — no script to run, always current, works in any browser.
+
+- 6 keyword searches × 9 countries = ~18 API calls per page load
+- Client-side title relevance filter removes off-topic results
+- Date-range toggle (Any time / Past month / Past week / Past 24 h)
+- Countries covered: GB, DE, NL, FR, US, CA, ZA, AU, SG
+
+RSS feeds (2.2) for Devex, ReliefWeb, ImpactPool, and FAO remain useful as a complement — those platforms are not covered by Adzuna.
 
 ---
 

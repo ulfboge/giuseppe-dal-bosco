@@ -1,14 +1,19 @@
-# Giuseppe Dal Bosco — Job Search Portfolio
+# Giuseppe Dal Bosco — Job Search Hub
 
-> Senior Forestry Specialist & Advisor | Tropical Plantations · Landscape Restoration · Forest Investment  
-> Based in Hasbergen, Germany · Open to international relocation  
+> Senior Forestry Specialist & Advisor | Tropical Plantations · Landscape Restoration · Forest Investment
+> Based in Hasbergen, Germany · Open to international relocation
 > English · Spanish · Italian
+
+**Live site:** https://ulfboge.github.io/giuseppe-dal-bosco/
 
 ---
 
-## What This Repository Contains
+## Pages
 
-This is a personal job-search support toolkit and portfolio website for Giuseppe Dal Bosco, a Forest Engineer with 27+ years of experience in tropical and sub-tropical forestry across Latin America, Asia, Africa, and the South Pacific.
+| Page | URL | Purpose |
+|---|---|---|
+| Profile | `/` | Professional profile — summary, experience, strengths, languages, target roles |
+| Jobs | `/jobs.html` | Live job feed + curated org career pages + keyword bank |
 
 ---
 
@@ -16,63 +21,46 @@ This is a personal job-search support toolkit and portfolio website for Giuseppe
 
 ```
 /
-├── README.md                        ← This file
-├── index.html                       ← Personal job-search portfolio webpage
-├── style.css                        ← Stylesheet for index.html
-├── assets/                          ← Images, CV PDF, and other assets
-│   └── (add profile photo, CV PDF here)
-└── data/
-    ├── positioning.md               ← 5 professional positioning options + recommendation
-    ├── job_targets.md               ← Prioritized target role titles (4 tracks)
-    ├── search_terms.md              ← Search keywords by platform (LinkedIn, Devex, FAO, etc.)
-    ├── target_organizations.md      ← Categorized employer list (7 categories, 60+ orgs)
-    ├── scoring_framework.md         ← 6-criterion job-fit scoring system (1–5 scale)
-    ├── website_content.md           ← Copywriting drafts for the webpage
-    ├── automation_ideas.md          ← Optional expansion: RSS feeds, GitHub Actions, etc.
-    └── job_log.csv                  ← (create this) Manual job application tracker
+├── CLAUDE.md                   ← Project context for AI-assisted development
+├── README.md                   ← This file
+├── index.html                  ← Profile page
+├── jobs.html                   ← Live job feed page (Adzuna API)
+├── style.css                   ← Shared stylesheet
+├── .nojekyll                   ← Bypasses Jekyll on GitHub Pages
+├── assets/                     ← Images and static files
+├── docs/
+│   └── Profile.pdf             ← CV / profile document
+└── data/                       ← Research and strategy documents
+    ├── positioning.md          ← 5 professional positioning options + recommendation
+    ├── job_targets.md          ← Prioritised role titles by track
+    ├── search_terms.md         ← Keywords by platform (LinkedIn, Devex, FAO, etc.)
+    ← target_organizations.md  ← 60+ target employers in 7 categories
+    ├── scoring_framework.md    ← 6-criterion job-fit scoring system (1–5 scale)
+    ├── website_content.md      ← Copywriting source for index.html
+    └── automation_ideas.md     ← Enhancement ideas and implementation status
 ```
 
 ---
 
-## Quickstart
+## Live Job Feed
 
-### 1. View the portfolio website locally
+`jobs.html` fetches real job postings on page load via the **Adzuna API** (free tier). It queries 6 keyword searches across 9 countries — UK, Germany, Netherlands, France, US, Canada, South Africa, Australia, Singapore — deduplicates results, filters by title relevance, and sorts newest-first.
 
-Open `index.html` in any browser — no build step required.
-
-### 2. Publish via GitHub Pages
-
-1. Push this repository to GitHub
-2. Go to **Settings → Pages**
-3. Source: `Deploy from a branch` → `main` → `/ (root)`
-4. Site will be live at `https://[your-username].github.io/[repo-name]/`
-
-Optional: add a custom domain (e.g. giuseppedalbosco.com) in the Pages settings.
-
-### 3. Start tracking applications
-
-Create `data/job_log.csv`:
-
-```csv
-date_found,title,organisation,source,url,deadline,score_total,status,notes
-2026-06-01,Forest Restoration Specialist,WeForest,LinkedIn,https://...,2026-07-01,28,applied,Strong FLR fit
-```
-
-Status values: `identified` → `scored` → `applied` → `interview` → `offer` → `closed`
+A date-range toggle (Any time / Past month / Past week / Past 24 h) re-fetches with a tighter date filter. Credentials are embedded in `jobs.html`; see `CLAUDE.md` for API details.
 
 ---
 
-## Using the Data Files
+## Data Files
 
 | File | Use for |
 |---|---|
-| `data/positioning.md` | Choosing which headline/summary to use for each application track |
-| `data/job_targets.md` | Knowing which job titles to search for on each platform |
-| `data/search_terms.md` | Setting up saved searches and alerts on LinkedIn, Devex, FAO, etc. |
-| `data/target_organizations.md` | Prioritising which organisations to check directly each week |
-| `data/scoring_framework.md` | Quickly evaluating each new job posting before deciding to apply |
-| `data/website_content.md` | Source copy for index.html; also reusable for cover letter intros |
-| `data/automation_ideas.md` | Future enhancements — RSS monitoring, GitHub Actions, etc. |
+| `data/positioning.md` | Choosing which headline/summary to use per application track |
+| `data/job_targets.md` | Which job titles to search on each platform |
+| `data/search_terms.md` | Saved searches and alerts on LinkedIn, Devex, FAO, etc. |
+| `data/target_organizations.md` | Which organisations to check directly each week |
+| `data/scoring_framework.md` | Evaluating a new posting before deciding to apply |
+| `data/website_content.md` | Source copy for index.html; reusable for cover letter intros |
+| `data/automation_ideas.md` | Future enhancements and what has already been implemented |
 
 ---
 
@@ -81,30 +69,22 @@ Status values: `identified` → `scored` → `applied` → `interview` → `offe
 **Giuseppe Dal Bosco** is a Forest Engineer (Universidad del Valle de Guatemala, 1997/1999) with over 27 years of experience in tropical and sub-tropical forestry.
 
 **Key highlights:**
-- CEO of Fiji Hardwood Corporation Limited — managed 60,000 ha state-owned mahogany plantations
-- Forestry Specialist at KAYA (2023–2025) — forest landscape restoration planning, modelling, and monitoring
-- M&E Specialist at Rainforest Alliance TREES Programme — 13 projects, 4 countries, international donors
-- 20+ years of independent forestry consulting — plantation management, natural forest, financial modelling, FSC
+- CEO, Fiji Hardwood Corporation — managed 60,000 ha state-owned mahogany plantations
+- Forestry Specialist, KAYA (2023–2025) — forest landscape restoration planning, modelling, and monitoring
+- M&E Specialist, Rainforest Alliance TREES Programme — 13 projects, 4 countries, international donors
+- 20+ years independent consulting — plantation management, natural forest, financial modelling, FSC
 - Carbon forestry inventories and financial modelling
-- FSC FM/CoC certification experience (SW-FM/COC-1450; SW-COC-939)
-- Languages: English, Spanish, Italian (native/bilingual); German (limited working); Portuguese (elementary)
+- FSC FM/CoC certified (SW-FM/COC-1450; SW-COC-939)
+- Languages: English, Spanish, Italian (native/bilingual); German (limited); Portuguese (elementary)
 
 ---
 
 ## Assets to Add
 
 - [ ] `assets/profile-photo.jpg` — professional headshot
-- [ ] `assets/cv-giuseppe-dalbosco.pdf` — current CV
-- [ ] Update `index.html` contact section with phone/WhatsApp if desired
-- [ ] Update availability date in contact section
-- [ ] Confirm Portuguese working level for accuracy in search_terms.md
-- [ ] Confirm VCS/REDD+ project credentials for carbon track positioning
-
----
-
-## Notes on Accuracy
-
-All content in this repository is based strictly on the LinkedIn profile as of June 2026. Items marked `[needs confirmation]` in data files indicate information not present in the source profile and should be verified before use in applications.
+- [ ] `assets/cv-giuseppe-dalbosco.pdf` — current CV (update `docs/Profile.pdf` or add here)
+- [ ] Confirm Portuguese working level for accuracy in `data/search_terms.md`
+- [ ] Confirm VCS/REDD+ project credentials before targeting carbon-specific roles
 
 ---
 
