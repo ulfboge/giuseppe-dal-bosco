@@ -293,7 +293,7 @@
       <div class="section-header">
         <span class="section-label">Live Feed</span>
         <h2>Open Positions</h2>
-        <p>Pulled live from job boards across the UK, Germany, US, Netherlands, and more. Refreshes every time you open the page.</p>
+        <p>Pulled live from job boards across Europe, the Americas, Africa, and Asia-Pacific. Refreshes every time you open the page.</p>
         <div class="date-filter" role="group" aria-label="Date range">
           <button class="df-btn" data-days="">Any time</button>
           <button class="df-btn" data-days="30" aria-pressed="true">Past month</button>
@@ -456,15 +456,28 @@
     var APP_KEY = '86fbfc6bb921d9cbe939738ac9e9a8e9';
 
     var SEARCHES = [
+      // Europe
       { what: 'forest restoration',              country: 'gb' },
       { what: 'forest restoration',              country: 'de' },
-      { what: 'forest restoration',              country: 'us' },
+      { what: 'forest restoration',              country: 'nl' },
+      { what: 'forest restoration',              country: 'fr' },
       { what: 'forestry advisor',                country: 'gb' },
       { what: 'forestry advisor',                country: 'nl' },
       { what: 'reforestation manager',           country: 'gb' },
-      { what: 'reforestation manager',           country: 'us' },
       { what: 'forest carbon specialist',        country: 'gb' },
       { what: 'natural resource management forestry', country: 'gb' },
+      // Americas
+      { what: 'forest restoration',              country: 'us' },
+      { what: 'forest restoration',              country: 'ca' },
+      { what: 'reforestation manager',           country: 'us' },
+      { what: 'forestry advisor',                country: 'ca' },
+      // Africa
+      { what: 'forest restoration',              country: 'za' },
+      { what: 'forestry advisor',                country: 'za' },
+      // Asia-Pacific
+      { what: 'forest restoration',              country: 'au' },
+      { what: 'forest restoration',              country: 'sg' },
+      { what: 'forestry advisor',                country: 'au' },
     ];
 
     function fetchSearch(what, country, maxDays) {
