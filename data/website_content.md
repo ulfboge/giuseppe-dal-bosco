@@ -136,7 +136,7 @@ Delivers comprehensive forest asset valuations, wood-flow projections, and techn
 
 ### Contact details
 - **Email:** giuseppe.dalbosco@gmail.com
-- **LinkedIn:** [linkedin.com/in/giuseppe-dalbosco-35815b2a](https://www.linkedin.com/in/giuseppe-dalbosco-35815b2a)
+- **LinkedIn:** [linkedin.com/in/giuseppe-dal-bosco-35815b2a](https://www.linkedin.com/in/giuseppe-dal-bosco-35815b2a)
 
 ### Optional additions [needs confirmation]
 - Personal website URL (if applicable)
