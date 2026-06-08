@@ -668,8 +668,14 @@
 
         jobs.sort(function(a, b) { return new Date(b.created) - new Date(a.created); });
 
+        // If every Adzuna call came back empty, quota may be exhausted
+        var adzunaTotalRaw = adzunaResponses.reduce(function(n, r) { return n + (r.results || []).length; }, 0);
         if (jobs.length === 0) {
-          statusEl.textContent = 'No positions found at this time — the feed refreshes on each visit, so check back in a day or two.';
+          if (adzunaTotalRaw === 0) {
+            statusEl.innerHTML = 'No positions found on this load. The commercial job board (Adzuna) has a 250-call daily limit; if the page has been loaded many times today the quota may be temporarily exhausted. <strong>Try again tomorrow</strong> — the ReliefWeb (NGO/UN) feed is always active.';
+          } else {
+            statusEl.textContent = 'No matching positions at this time — the feed refreshes on each visit, so check back in a day or two.';
+          }
           return;
         }
 
