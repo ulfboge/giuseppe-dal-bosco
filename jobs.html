@@ -315,7 +315,7 @@
       <div class="section-header">
         <span class="section-label">Live Feed</span>
         <h2>Open Positions</h2>
-        <p>Pulled live from Adzuna (commercial boards) and ReliefWeb (NGO &amp; UN sector) across Europe, the Americas, Africa, and Asia-Pacific. Organised by recency — all active postings shown at once.</p>
+        <p>Pulled live from Adzuna (commercial boards) across Europe, the Americas, Africa, and Asia-Pacific. Organised by recency — all active postings shown at once.</p>
       </div>
 
       <p id="jobs-status" class="jobs-status"></p>
@@ -619,7 +619,10 @@
     }
 
     function fetchReliefWeb(query) {
-      return fetch('https://api.reliefweb.int/v1/jobs?appname=giuseppe-jobsearch', {
+      // ReliefWeb v2 requires a registered appname — register at https://apidoc.reliefweb.int/parameters#appname
+      // Replace RELIEFWEB_APPNAME_HERE above with the approved appname to re-enable this feed.
+      return Promise.resolve([]);
+      return fetch('https://api.reliefweb.int/v2/jobs?appname=RELIEFWEB_APPNAME_HERE', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -672,7 +675,7 @@
         var adzunaTotalRaw = adzunaResponses.reduce(function(n, r) { return n + (r.results || []).length; }, 0);
         if (jobs.length === 0) {
           if (adzunaTotalRaw === 0) {
-            statusEl.innerHTML = 'No positions found on this load. The commercial job board (Adzuna) has a 250-call daily limit; if the page has been loaded many times today the quota may be temporarily exhausted. <strong>Try again tomorrow</strong> — the ReliefWeb (NGO/UN) feed is always active.';
+            statusEl.innerHTML = 'No positions found on this load. The commercial job board (Adzuna) has a 250-call daily limit; if the page has been loaded many times today the quota may be temporarily exhausted. <strong>Try again tomorrow</strong> when the daily quota resets.';
           } else {
             statusEl.textContent = 'No matching positions at this time — the feed refreshes on each visit, so check back in a day or two.';
           }
