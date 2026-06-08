@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV Tailoring — Giuseppe Dal Bosco</title>
+  <meta name="description" content="Generate a tailored two-page CV draft for any forestry or restoration role — paste the job description and open the prompt in Claude.ai." />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ============================================================
+       cv.html — page-specific styles
+       ============================================================ */
+
+    .cv-hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+      color: var(--white);
+      padding: 3.5rem 0 3rem;
+      text-align: center;
+    }
+    .cv-hero .section-label { color: var(--green-light); margin-bottom: 0.6rem; }
+    .cv-hero h1 {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.9rem;
+      color: var(--white);
+    }
+    .cv-hero .subtitle {
+      font-size: 1rem;
+      color: var(--green-pale);
+      max-width: 540px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .cv-section { padding: 3.5rem 0; }
+    .cv-section.alt { background: var(--white); }
+
+    /* Steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .step-num {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: var(--green-mid);
+      color: var(--white);
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-text {
+      font-size: 0.875rem;
+      color: var(--text-mid);
+      line-height: 1.5;
+    }
+
+    /* Textarea */
+    .jd-label {
+      display: block;
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+    .jd-textarea {
+      width: 100%;
+      min-height: 280px;
+      padding: 1rem 1.1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-dark);
+      background: var(--white);
+      resize: vertical;
+      transition: border-color 0.15s;
+    }
+    .jd-textarea:focus {
+      outline: none;
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(45,106,79,0.12);
+    }
+    .jd-textarea::placeholder { color: var(--text-light); }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      align-items: center;
+    }
+    .btn-generate {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--green-mid);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.75rem 1.75rem;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-generate:hover { background: var(--green-dark); }
+    .btn-generate:active { transform: translateY(1px); }
+    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-copy-only {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: transparent;
+      color: var(--green-mid);
+      border: 1.5px solid var(--green-mid);
+      border-radius: var(--radius);
+      padding: 0.7rem 1.25rem;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-copy-only:hover { background: var(--green-pale); }
+    .btn-copy-only:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Status message */
+    .cv-status {
+      display: none;
+      margin-top: 1.25rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .cv-status.success {
+      background: var(--green-pale);
+      color: var(--green-dark);
+      border: 1px solid #b7d9c6;
+    }
+    .cv-status.error {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffc107;
+    }
+
+    /* Tips */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .tip-card {
+      background: var(--sand);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--green-light);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+    }
+    .tip-card p {
+      font-size: 0.875rem;
+      color: var(--text-mid);
+      line-height: 1.55;
+      margin: 0;
+    }
+    .tip-card code {
+      background: var(--green-pale);
+      color: var(--green-dark);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.82rem;
+      font-family: monospace;
+    }
+
+    /* Footer */
+    .cv-footer {
+      background: #111;
+      color: var(--text-light);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+    }
+    .cv-footer a { color: var(--green-light); }
+    .cv-footer a:hover { color: var(--white); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      nav ul { gap: 0.65rem; }
+      nav ul a { font-size: 0.78rem; }
+      .cv-hero { padding: 2.5rem 0 2rem; }
+      .steps { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ Navigation ============ -->
+  <nav>
+    <div class="container">
+      <a href="index.html" class="nav-name" style="color:var(--white);font-weight:700;font-size:1rem;letter-spacing:0.02em;text-decoration:none;">Giuseppe Dal Bosco</a>
+      <ul>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#experience">Experience</a></li>
+        <li><a href="jobs.html">Jobs</a></li>
+        <li><a href="cv.html" class="nav-active" style="color:var(--green-light);border-bottom:2px solid var(--green-light);padding-bottom:1px;">CV</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ============ Hero ============ -->
+  <header class="cv-hero">
+    <div class="container">
+      <span class="section-label">CV Tailoring</span>
+      <h1>Generate a Tailored CV Draft</h1>
+      <p class="subtitle">Paste a job description and get a two-page CV draft matched to the role — drafted by Claude AI in seconds.</p>
+    </div>
+  </header>
+
+  <!-- ============ Main Tool ============ -->
+  <section class="cv-section">
+    <div class="container">
+
+      <span class="section-label">How it works</span>
+      <h2>Four steps, thirty seconds</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <p class="step-text">Paste the full job description into the box below.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <p class="step-text">Click <strong>Generate CV Draft</strong> — the prompt is copied and Claude.ai opens.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <p class="step-text">Paste into Claude.ai (<kbd>Ctrl+V</kbd> / <kbd>⌘V</kbd>) and press Enter.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <p class="step-text">Copy the CV from Claude, or ask it to export as markdown for download.</p>
+        </div>
+      </div>
+
+      <label class="jd-label" for="jd-input">Job description</label>
+      <textarea
+        id="jd-input"
+        class="jd-textarea"
+        placeholder="Paste the full job description here — title, organisation, responsibilities, requirements, and any other details. The more complete, the better the tailoring."></textarea>
+
+      <div class="btn-row">
+        <button class="btn-generate" id="btn-generate" onclick="generateCV()">
+          ✦ Generate CV Draft &rarr;
+        </button>
+        <button class="btn-copy-only" id="btn-copy" onclick="copyOnly()">
+          Copy prompt only
+        </button>
+      </div>
+
+      <div id="cv-status" class="cv-status"></div>
+
+    </div>
+  </section>
+
+  <!-- ============ Tips ============ -->
+  <section class="cv-section alt">
+    <div class="container">
+      <span class="section-label">Getting more from Claude</span>
+      <h2>Refinement tips</h2>
+      <p class="section-intro" style="margin-bottom:1.5rem;">After Claude generates the draft, stay in the same conversation and ask follow-up questions.</p>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <p>Emphasise a specific role:<br><code>Expand the Fiji CEO section — the JD needs large-scale operations experience</code></p>
+        </div>
+        <div class="tip-card">
+          <p>Sharpen the summary:<br><code>Rewrite the professional summary to lead with landscape restoration and M&amp;E</code></p>
+        </div>
+        <div class="tip-card">
+          <p>Cut to one page:<br><code>Trim this to a strict one-page version, keeping only the three most relevant roles</code></p>
+        </div>
+        <div class="tip-card">
+          <p>Get a cover letter too:<br><code>Now draft a half-page cover letter for the same role, in first person</code></p>
+        </div>
+        <div class="tip-card">
+          <p>Download as markdown:<br><code>Output the final CV as clean markdown I can copy into a .md file</code></p>
+        </div>
+        <div class="tip-card">
+          <p>Switch language:<br><code>Translate the CV into Spanish, keeping the same structure and tailoring</code></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Footer ============ -->
+  <footer class="cv-footer">
+    <p>Giuseppe Dal Bosco &middot; Forestry Specialist &amp; Advisor &middot; Hasbergen, Germany</p>
+    <a href="index.html">&larr; Back to profile</a>
+  </footer>
+
+  <script>
+    /* ============================================================
+       Giuseppe Dal Bosco — full profile context for the prompt
+       ============================================================ */
+    var PROFILE = [
+      'Name: Giuseppe Dal Bosco',
+      'Contact: giuseppe.dalbosco@gmail.com | Hasbergen, Lower Saxony, Germany | Open to international relocation',
+      'LinkedIn: https://www.linkedin.com/in/giuseppe-dal-bosco-35815b2a',
+      '',
+      'EDUCATION',
+      'Forest Engineer — Universidad del Valle de Guatemala, Guatemala City (1997 / 1999)',
+      '',
+      'EXPERIENCE',
+      '',
+      'Forestry Specialist — KAYA | Germany / Global | 2023–2025',
+      '- Led planning and modelling of forest landscape restoration (FLR) programmes across multiple countries',
+      '- Responsible for assessment, monitoring, and evaluation of field restoration operations',
+      '- Coordination with international field partners and implementation teams',
+      '- Remote sensing and spatial analysis for restoration monitoring and reporting',
+      '',
+      'Chief Executive Officer — Fiji Hardwood Corporation Limited | Fiji Islands | 2015–2018',
+      '- Managed sustainable forest operations across 60,000 ha of state-owned mahogany plantations',
+      '- Led reforestation, silviculture, harvesting, and log marketing operations at national scale',
+      '- Reported directly to the Government of Fiji; oversaw large multidisciplinary technical and operational teams',
+      '- IFC liaison; managed relationships with international investors, development partners, and bilateral donors',
+      '- Prepared strategic and financial plans, annual budgets, and board-level reporting',
+      '',
+      'M&E Specialist — Rainforest Alliance, TREES Programme | Central America & Caribbean | 2010–2012',
+      '- Monitored and evaluated 13 forestry and landscape projects across 4 countries',
+      '- Developed M&E frameworks, indicators, and data collection systems for large-scale conservation programmes',
+      '- Donor reporting to USAID, Inter-American Development Bank (IDB), and European foundations',
+      '- Capacity-building with implementing partner organisations on M&E practices',
+      '',
+      'Independent Consultant — Dal Bosco Technical Services | Latin America / Europe / Global | 2005–Present',
+      '- Technical and financial modelling for plantation and natural forest investments (tropical and sub-tropical species)',
+      '- Carbon forestry inventories and financial models for carbon project development and REDD+ feasibility',
+      '- Forest asset valuations, wood-flow projections, and due diligence support for international investors',
+      '- FSC FM/CoC assessment and certification management for private forest enterprises',
+      '- Clients have included private investors, development finance institutions, and forest companies',
+      '',
+      'Forestry Technician & Consultant — CONFORSA / Interforest S.A. | Guatemala & Central America | 1998–2005',
+      '- FSC FM/CoC certification management for private and community-owned forest operations',
+      '- Forest inventories, growth modelling, and management plan preparation for natural forest and plantations',
+      '- Degraded forest reclamation and early-stage restoration design',
+      '- Contributed to National Greenhouse Gas Inventory — Land Use Change and Forestry (LUCF) module',
+      '- Field supervision of silvicultural operations and harvesting',
+      '',
+      'KEY SKILLS',
+      '- Tropical & sub-tropical plantation management (mahogany, teak, pine, native species)',
+      '- Forest landscape restoration (FLR) — planning, modelling, field implementation, monitoring',
+      '- Monitoring & Evaluation (M&E) — framework design, indicator development, donor reporting',
+      '- Financial modelling — wood-flow projections, NPV/IRR analysis, forest asset valuation',
+      '- Carbon forestry — inventories, additionality assessment, REDD+ feasibility',
+      '- FSC Forest Management & Chain of Custody certification (SW-FM/COC-1450; SW-COC-939)',
+      '- GIS and remote sensing for forest monitoring and spatial analysis',
+      '- Team leadership — large multinational field and technical teams',
+      '- Stakeholder engagement — government, investors, NGO partners, development banks (IFC, IDB)',
+      '',
+      'LANGUAGES',
+      'English — Native / Bilingual',
+      'Spanish — Native / Bilingual',
+      'Italian — Native / Bilingual',
+      'German — Limited working proficiency',
+      'Portuguese — Elementary',
+    ].join('\n');
+
+    var PROMPT_INSTRUCTIONS = [
+      'You are an expert CV writer specialising in international forestry, conservation, and natural resource management roles.',
+      'Write a tailored two-page CV for Giuseppe Dal Bosco, optimised for the specific job description provided below.',
+      '',
+      'Instructions:',
+      '- Format in clean Markdown: # for name, ## for section headers, **bold** for role titles and organisations',
+      '- Structure: Name / Contact → Professional Summary → Experience → Key Skills → Certifications → Education → Languages',
+      '- Professional Summary must be 3–4 lines and directly address the key requirements in the job description',
+      '- Order experience and bullet points to lead with what is most relevant to this role; de-emphasise less relevant roles',
+      '- Bullets should be achievement-oriented and specific — numbers and outcomes where possible',
+      '- Omit anything clearly not relevant to this position',
+      '- Total CV should fit two printed pages (approximately 600–750 words of content)',
+      '- Output ONLY the CV in markdown. No introduction, no commentary, no closing remarks.',
+      '',
+      '---',
+      '',
+      "GIUSEPPE DAL BOSCO — FULL PROFILE\n\n" + PROFILE,
+      '',
+      '---',
+      '',
+      'JOB DESCRIPTION TO TAILOR FOR:',
+    ].join('\n');
+
+    function buildPrompt(jobDescription) {
+      return PROMPT_INSTRUCTIONS + '\n\n' + jobDescription.trim();
+    }
+
+    function showStatus(msg, type) {
+      var el = document.getElementById('cv-status');
+      el.textContent = msg;
+      el.className = 'cv-status ' + type;
+      el.style.display = 'block';
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      // Fallback
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+
+    function generateCV() {
+      var jd = document.getElementById('jd-input').value.trim();
+      if (!jd) {
+        showStatus('Please paste a job description first.', 'error');
+        return;
+      }
+      var prompt = buildPrompt(jd);
+      var btn = document.getElementById('btn-generate');
+      btn.disabled = true;
+      btn.textContent = 'Copying…';
+
+      copyToClipboard(prompt).then(function() {
+        window.open('https://claude.ai/new', '_blank');
+        showStatus(
+          '✓ Prompt copied to clipboard and Claude.ai is opening in a new tab. Paste with Ctrl+V (or ⌘V on Mac) and press Enter to generate the CV.',
+          'success'
+        );
+        btn.textContent = '✓ Done — open Claude.ai tab';
+        setTimeout(function() {
+          btn.disabled = false;
+          btn.innerHTML = '&#x2736; Generate CV Draft &rarr;';
+        }, 4000);
+      }).catch(function() {
+        showStatus('Could not copy automatically — click "Copy prompt only" and paste manually into Claude.ai.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '&#x2736; Generate CV Draft &rarr;';
+      });
+    }
+
+    function copyOnly() {
+      var jd = document.getElementById('jd-input').value.trim();
+      if (!jd) {
+        showStatus('Please paste a job description first.', 'error');
+        return;
+      }
+      var prompt = buildPrompt(jd);
+      var btn = document.getElementById('btn-copy');
+      btn.disabled = true;
+
+      copyToClipboard(prompt).then(function() {
+        showStatus('✓ Prompt copied to clipboard. Open claude.ai and paste it in.', 'success');
+        btn.textContent = '✓ Copied';
+        setTimeout(function() {
+          btn.disabled = false;
+          btn.textContent = 'Copy prompt only';
+        }, 3000);
+      }).catch(function() {
+        showStatus('Clipboard copy failed — try the main button or copy manually.', 'error');
+        btn.disabled = false;
+      });
+    }
+  </script>
+
+</body>
+</html>
