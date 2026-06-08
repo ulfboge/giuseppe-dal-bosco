@@ -89,6 +89,19 @@
       color: var(--text-light);
     }
 
+    /* ---- Source badge ---- */
+    .job-source {
+      display: inline-block;
+      font-size: 0.67rem;
+      font-weight: 700;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      vertical-align: middle;
+    }
+    .job-source-rw { background: #dbeafe; color: #1d4ed8; }
+
     /* ---- Live job feed ---- */
     .jobs-status {
       color: var(--text-mid);
@@ -301,7 +314,7 @@
       <div class="section-header">
         <span class="section-label">Live Feed</span>
         <h2>Open Positions</h2>
-        <p>Pulled live from job boards across Europe, the Americas, Africa, and Asia-Pacific. Organised by recency — all active postings shown at once.</p>
+        <p>Pulled live from Adzuna (commercial boards) and ReliefWeb (NGO &amp; UN sector) across Europe, the Americas, Africa, and Asia-Pacific. Organised by recency — all active postings shown at once.</p>
       </div>
 
       <p id="jobs-status" class="jobs-status"></p>
@@ -555,6 +568,18 @@
       { what: 'forestry advisor',                country: 'au' },
     ];
 
+    // ReliefWeb — NGO/UN/development sector board (no API key required)
+    var RELIEFWEB_QUERIES = [
+      'forest restoration',
+      'forestry specialist',
+      'reforestation',
+      'forest landscape restoration',
+      'sustainable forest management',
+      'agroforestry',
+      'forest carbon',
+      'natural resource management forestry',
+    ];
+
     function fetchSearch(what, country) {
       var url = 'https://api.adzuna.com/v1/api/jobs/' + country + '/search/1'
         + '?app_id=' + APP_ID
@@ -573,6 +598,46 @@
         .catch(function() { return { results: [], _err: true }; }); // network failure only
     }
 
+    function normalizeReliefWebJob(item) {
+      var f = item.fields || {};
+      var org = (f.source && f.source[0]) ? f.source[0].name : '';
+      var country = (f.country && f.country[0]) ? f.country[0].name : 'International';
+      var created = (f.date && f.date.created) ? f.date.created : new Date().toISOString();
+      var url = f.url || ('https://reliefweb.int/job/' + item.id);
+      return {
+        id: 'rw_' + item.id,
+        title: f.title || '',
+        company: { display_name: org },
+        location: { display_name: country },
+        created: created,
+        redirect_url: url,
+        salary_min: null,
+        salary_max: null,
+        _source: 'reliefweb',
+      };
+    }
+
+    function fetchReliefWeb(query) {
+      return fetch('https://api.reliefweb.int/v1/jobs?appname=giuseppe-jobsearch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: { value: query, operator: 'AND' },
+          filter: { field: 'status', value: 'open' },
+          fields: { include: ['title', 'date', 'source', 'country', 'url'] },
+          sort: ['date:desc'],
+          limit: 10,
+        }),
+      })
+        .then(function(r) {
+          if (!r.ok) return [];
+          return r.json().then(function(d) {
+            return (d.data || []).map(normalizeReliefWebJob);
+          });
+        })
+        .catch(function() { return []; });
+    }
+
     function loadJobs() {
       var statusEl = document.getElementById('jobs-status');
       var feedEl   = document.getElementById('jobs-feed');
@@ -580,31 +645,30 @@
       statusEl.style.display = 'block';
       feedEl.innerHTML = '';
 
-      var promises = SEARCHES.map(function(s) {
-        return fetchSearch(s.what, s.country);
-      });
+      var adzunaPromises = SEARCHES.map(function(s) { return fetchSearch(s.what, s.country); });
+      var rwPromises     = RELIEFWEB_QUERIES.map(function(q) { return fetchReliefWeb(q); });
 
-      Promise.all(promises).then(function(responses) {
-        var errorCount = responses.filter(function(r) { return r._err; }).length;
+      Promise.all([Promise.all(adzunaPromises), Promise.all(rwPromises)]).then(function(both) {
+        var adzunaResponses = both[0];
+        var rwResponses     = both[1];
         var seen = {};
         var jobs = [];
-        responses.forEach(function(r) {
+
+        adzunaResponses.forEach(function(r) {
           (r.results || []).forEach(function(job) {
-            if (!seen[job.id] && isRelevant(job)) {
-              seen[job.id] = true;
-              jobs.push(job);
-            }
+            if (!seen[job.id] && isRelevant(job)) { seen[job.id] = true; jobs.push(job); }
+          });
+        });
+        rwResponses.forEach(function(arr) {
+          (arr || []).forEach(function(job) {
+            if (!seen[job.id] && isRelevant(job)) { seen[job.id] = true; jobs.push(job); }
           });
         });
 
-        jobs.sort(function(a, b) {
-          return new Date(b.created) - new Date(a.created);
-        });
+        jobs.sort(function(a, b) { return new Date(b.created) - new Date(a.created); });
 
         if (jobs.length === 0) {
-          statusEl.textContent = errorCount >= responses.length
-            ? '⚠ Could not connect to the job feed — check your internet connection or try again shortly.'
-            : 'No positions found at this time — the feed refreshes on each visit, so check back in a day or two.';
+          statusEl.textContent = 'No positions found at this time — the feed refreshes on each visit, so check back in a day or two.';
           return;
         }
 
@@ -613,8 +677,8 @@
         // Group by recency
         var now = Date.now();
         var buckets = [
-          { label: 'Posted this week',  max: 7,    jobs: [] },
-          { label: 'Posted this month', max: 30,   jobs: [] },
+          { label: 'Posted this week',  max: 7,     jobs: [] },
+          { label: 'Posted this month', max: 30,    jobs: [] },
           { label: 'Older postings',    max: 99999, jobs: [] },
         ];
         jobs.forEach(function(job) {
@@ -631,11 +695,6 @@
                 + ' <span class="time-group-count">(' + b.jobs.length + ')</span></div>';
           html += b.jobs.map(renderCard).join('');
         });
-
-        if (errorCount > 0) {
-          html += '<p class="feed-footnote">⚠ ' + errorCount + ' of ' + responses.length
-                + ' sources returned errors — some postings may be missing.</p>';
-        }
 
         feedEl.innerHTML = html;
       });
@@ -663,6 +722,7 @@
         + '<span class="job-location">' + esc(job.location.display_name) + '</span>'
         + '<span class="job-dot">&middot;</span>'
         + '<span class="job-age">' + age + '</span>'
+        + (job._source === 'reliefweb' ? '<span class="job-dot">&middot;</span><span class="job-source job-source-rw">ReliefWeb</span>' : '')
         + '</div>'
         + '<div class="job-card-main">'
         + '<span class="job-title">' + esc(job.title) + '</span>'
