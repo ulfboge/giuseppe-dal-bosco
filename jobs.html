@@ -56,29 +56,37 @@
       line-height: 1.6;
     }
 
-    /* ---- Date-range toggle ---- */
-    .date-filter {
+    /* ---- Time group headings ---- */
+    .time-group-label {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1.75rem 0 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--green-mid);
     }
-    .df-btn {
-      padding: 0.35rem 1rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--white);
-      color: var(--text-mid);
-      font-size: 0.82rem;
+    .time-group-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .time-group-label:first-child { margin-top: 0; }
+    .time-group-count {
+      color: var(--text-light);
       font-weight: 500;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      text-transform: none;
+      letter-spacing: 0;
     }
-    .df-btn:hover { border-color: var(--green-mid); color: var(--green-dark); }
-    .df-btn[aria-pressed="true"] {
-      background: var(--green-mid);
-      color: var(--white);
-      border-color: var(--green-mid);
+    .feed-footnote {
+      margin-top: 1.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-light);
     }
 
     /* ---- Live job feed ---- */
@@ -293,13 +301,7 @@
       <div class="section-header">
         <span class="section-label">Live Feed</span>
         <h2>Open Positions</h2>
-        <p>Pulled live from job boards across Europe, the Americas, Africa, and Asia-Pacific. Refreshes every time you open the page.</p>
-        <div class="date-filter" role="group" aria-label="Date range">
-          <button class="df-btn" data-days="">Any time</button>
-          <button class="df-btn" data-days="30" aria-pressed="true">Past month</button>
-          <button class="df-btn" data-days="7">Past week</button>
-          <button class="df-btn" data-days="1">Past 24 h</button>
-        </div>
+        <p>Pulled live from job boards across Europe, the Americas, Africa, and Asia-Pacific. Organised by recency — all active postings shown at once.</p>
       </div>
 
       <p id="jobs-status" class="jobs-status"></p>
@@ -553,7 +555,7 @@
       { what: 'forestry advisor',                country: 'au' },
     ];
 
-    function fetchSearch(what, country, maxDays) {
+    function fetchSearch(what, country) {
       var url = 'https://api.adzuna.com/v1/api/jobs/' + country + '/search/1'
         + '?app_id=' + APP_ID
         + '&app_key=' + APP_KEY
@@ -561,7 +563,6 @@
         + '&results_per_page=10'
         + '&sort_by=date'
         + '&content-type=application/json';
-      if (maxDays) url += '&max_days_old=' + maxDays;
       return fetch(url)
         .then(function(r) {
           if (!r.ok) return { results: [], _err: true };
@@ -570,7 +571,7 @@
         .catch(function() { return { results: [], _err: true }; });
     }
 
-    function loadJobs(maxDays) {
+    function loadJobs() {
       var statusEl = document.getElementById('jobs-status');
       var feedEl   = document.getElementById('jobs-feed');
       statusEl.textContent = 'Loading positions…';
@@ -578,7 +579,7 @@
       feedEl.innerHTML = '';
 
       var promises = SEARCHES.map(function(s) {
-        return fetchSearch(s.what, s.country, maxDays);
+        return fetchSearch(s.what, s.country);
       });
 
       Promise.all(promises).then(function(responses) {
@@ -599,23 +600,42 @@
         });
 
         if (jobs.length === 0) {
-          if (errorCount === responses.length) {
-            statusEl.textContent = '⚠ Could not connect to the job feed — check your internet connection or try again shortly.';
-          } else if (errorCount > 0) {
-            statusEl.textContent = 'No positions found for this date range (' + errorCount + ' sources unavailable). Try "Past month" or "Any time".';
-          } else {
-            statusEl.textContent = 'No positions found for this date range — try "Past month" or "Any time".';
-          }
+          statusEl.textContent = errorCount >= responses.length
+            ? '⚠ Could not connect to the job feed — check your internet connection or try again shortly.'
+            : 'No positions found at this time — the feed refreshes on each visit, so check back in a day or two.';
           return;
         }
 
+        statusEl.style.display = 'none';
+
+        // Group by recency
+        var now = Date.now();
+        var buckets = [
+          { label: 'Posted this week',  max: 7,    jobs: [] },
+          { label: 'Posted this month', max: 30,   jobs: [] },
+          { label: 'Older postings',    max: 99999, jobs: [] },
+        ];
+        jobs.forEach(function(job) {
+          var daysAgo = (now - new Date(job.created)) / 86400000;
+          for (var i = 0; i < buckets.length; i++) {
+            if (daysAgo <= buckets[i].max) { buckets[i].jobs.push(job); break; }
+          }
+        });
+
+        var html = '';
+        buckets.forEach(function(b) {
+          if (!b.jobs.length) return;
+          html += '<div class="time-group-label">' + b.label
+                + ' <span class="time-group-count">(' + b.jobs.length + ')</span></div>';
+          html += b.jobs.map(renderCard).join('');
+        });
+
         if (errorCount > 0) {
-          statusEl.textContent = '⚠ ' + errorCount + ' source(s) unavailable — results may be incomplete.';
-          statusEl.style.display = 'block';
-        } else {
-          statusEl.style.display = 'none';
+          html += '<p class="feed-footnote">⚠ ' + errorCount + ' of ' + responses.length
+                + ' sources returned errors — some postings may be missing.</p>';
         }
-        feedEl.innerHTML = jobs.map(renderCard).join('');
+
+        feedEl.innerHTML = html;
       });
     }
 
@@ -678,18 +698,8 @@
         .replace(/"/g, '&quot;');
     }
 
-    /* ---- Date-range toggle ---- */
-    var dfBtns = document.querySelectorAll('.df-btn');
-    dfBtns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        dfBtns.forEach(function(b) { b.removeAttribute('aria-pressed'); });
-        btn.setAttribute('aria-pressed', 'true');
-        loadJobs(btn.dataset.days || '');
-      });
-    });
-
-    /* ---- Initial load (past month) ---- */
-    loadJobs('30');
+    /* ---- Initial load ---- */
+    loadJobs();
 
     /* ============================================================
        Clipboard — keyword pills
