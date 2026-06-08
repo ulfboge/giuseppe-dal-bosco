@@ -565,10 +565,12 @@
         + '&content-type=application/json';
       return fetch(url)
         .then(function(r) {
-          if (!r.ok) return { results: [], _err: true };
+          // Non-200 from Adzuna typically means no coverage for this market/keyword —
+          // treat as empty results, not a connectivity error.
+          if (!r.ok) return { results: [], _err: false };
           return r.json().then(function(d) { return { results: d.results || [], _err: false }; });
         })
-        .catch(function() { return { results: [], _err: true }; });
+        .catch(function() { return { results: [], _err: true }; }); // network failure only
     }
 
     function loadJobs() {
@@ -670,23 +672,29 @@
     }
 
     /* ---- Title relevance filter ---- */
-    var TITLE_TERMS = [
-      'forest', 'forestry', 'forester',
+    // Terms that must appear at a word boundary (to avoid e.g. "rainforest builder" matching "forest")
+    var TITLE_TERMS_BOUNDARY = [
+      'forest', 'forestry', 'forester', 'woodland', 'timber', 'arborist',
+      'plantation', 'silviculture', 'agroforestry',
+    ];
+    // Terms where a substring match is fine (prefix-safe)
+    var TITLE_TERMS_SUBSTR = [
       'restor', 'reforest', 'afforest',
-      'conservat', 'conservation',
-      'silvicultur', 'agroforest', 'woodland',
+      'conservat',
       'natural resource', 'landscape restor',
       'nature-based', 'nbs', 'redd',
       'carbon project', 'forest carbon',
       'biodiversity', 'habitat restor',
-      'plantation',
       'land restor', 'ecosystem restor',
-      'timber', 'arborist', 'tree planting',
+      'tree planting',
     ];
 
     function isRelevant(job) {
       var title = (job.title || '').toLowerCase();
-      return TITLE_TERMS.some(function(term) { return title.indexOf(term) !== -1; });
+      if (TITLE_TERMS_SUBSTR.some(function(t) { return title.indexOf(t) !== -1; })) return true;
+      return TITLE_TERMS_BOUNDARY.some(function(t) {
+        return new RegExp('\\b' + t).test(title);
+      });
     }
 
     function esc(str) {
