@@ -24,7 +24,7 @@ Giuseppe's professional profile: summary, key strengths (8 cards), selected expe
 
 ### `jobs.html` — Live Job Feed
 - **Live feed section** — Fetches real job postings from the Adzuna API across 9 countries (GB, DE, NL, FR, US, CA, ZA, AU, SG) using 6 keyword searches, plus the ReliefWeb v2 jobs API (8 keyword queries, NGO/UN/development sector). Results are merged, deduplicated by ID, filtered by title relevance, and sorted newest-first. ReliefWeb results carry a "ReliefWeb" source badge.
-- **Date-range toggle** — Four pill buttons (Any time / Past month / Past week / Past 24 h) re-fetch the feed with a new `max_days_old` parameter.
+- **Same-day cache** — Every job seen today is stored in localStorage (`gdb_job_cache_v1`) and merged back in on each refresh, so thin/empty API responses (Adzuna rate limits or quota) never make earlier results disappear. The cache resets the next calendar day. Per-browser only — different devices each build their own cache.
 - **Target organizations** — 16 curated org career page links grouped into three categories.
 - **Keywords section** — 16 click-to-copy keyword pills for use on other job boards.
 

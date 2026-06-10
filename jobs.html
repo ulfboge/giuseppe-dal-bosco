@@ -642,6 +642,23 @@
         .catch(function() { return []; });
     }
 
+    /* ---- Same-day result cache ----
+       API responses vary between loads (Adzuna rate limits / daily quota), so every
+       job seen today is kept in localStorage and merged back in on each refresh.
+       The cache resets automatically the next calendar day. */
+    var CACHE_KEY = 'gdb_job_cache_v1';
+    function todayStr() { return new Date().toISOString().slice(0, 10); }
+    function readCache() {
+      try {
+        var c = JSON.parse(localStorage.getItem(CACHE_KEY));
+        if (c && c.date === todayStr() && Array.isArray(c.jobs)) return c.jobs;
+      } catch (e) {}
+      return [];
+    }
+    function writeCache(jobs) {
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ date: todayStr(), jobs: jobs })); } catch (e) {}
+    }
+
     function loadJobs() {
       var statusEl = document.getElementById('jobs-status');
       var feedEl   = document.getElementById('jobs-feed');
@@ -669,7 +686,14 @@
           });
         });
 
+        // Merge in everything already seen today, so a thin or empty API response
+        // (rate limit / quota) never makes earlier results disappear.
+        readCache().forEach(function(job) {
+          if (!seen[job.id]) { seen[job.id] = true; jobs.push(job); }
+        });
+
         jobs.sort(function(a, b) { return new Date(b.created) - new Date(a.created); });
+        writeCache(jobs);
 
         // If every Adzuna call came back empty, quota may be exhausted
         var adzunaTotalRaw = adzunaResponses.reduce(function(n, r) { return n + (r.results || []).length; }, 0);
