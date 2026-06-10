@@ -315,7 +315,7 @@
       <div class="section-header">
         <span class="section-label">Live Feed</span>
         <h2>Open Positions</h2>
-        <p>Pulled live from Adzuna (commercial boards) across Europe, the Americas, Africa, and Asia-Pacific. Organised by recency — all active postings shown at once.</p>
+        <p>Pulled live from Adzuna (commercial boards) and ReliefWeb (NGO/UN/development sector) across Europe, the Americas, Africa, and Asia-Pacific. Organised by recency — all active postings shown at once.</p>
       </div>
 
       <p id="jobs-status" class="jobs-status"></p>
@@ -625,8 +625,9 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          // Note: no status filter — the jobs API only returns active ("published") postings,
+          // and filtering on status:open silently matches nothing.
           query: { value: query, operator: 'AND' },
-          filter: { field: 'status', value: 'open' },
           fields: { include: ['title', 'date', 'source', 'country', 'url'] },
           sort: ['date:desc'],
           limit: 10,
