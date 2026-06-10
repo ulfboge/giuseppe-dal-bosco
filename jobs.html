@@ -569,7 +569,8 @@
       { what: 'forestry advisor',                country: 'au' },
     ];
 
-    // ReliefWeb — NGO/UN/development sector board (no API key required)
+    // ReliefWeb — NGO/UN/development sector board (registered appname, read-only)
+    var RELIEFWEB_APPNAME = 'dalbosco-jobsearch-x7k4sDESTKw8Q9CBJBuv';
     var RELIEFWEB_QUERIES = [
       'forest restoration',
       'forestry specialist',
@@ -619,10 +620,8 @@
     }
 
     function fetchReliefWeb(query) {
-      // ReliefWeb v2 requires a registered appname — register at https://apidoc.reliefweb.int/parameters#appname
-      // Replace RELIEFWEB_APPNAME_HERE above with the approved appname to re-enable this feed.
-      return Promise.resolve([]);
-      return fetch('https://api.reliefweb.int/v2/jobs?appname=RELIEFWEB_APPNAME_HERE', {
+      // ReliefWeb v2 requires a registered appname — approved 2026-06-10 (see RELIEFWEB_APPNAME above)
+      return fetch('https://api.reliefweb.int/v2/jobs?appname=' + encodeURIComponent(RELIEFWEB_APPNAME), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

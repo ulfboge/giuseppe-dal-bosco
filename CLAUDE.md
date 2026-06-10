@@ -23,7 +23,7 @@ The repo has two purposes:
 Giuseppe's professional profile: summary, key strengths (8 cards), selected experience (5 roles), languages (5), target roles and regions, contact. Styled with `style.css`.
 
 ### `jobs.html` — Live Job Feed
-- **Live feed section** — Fetches real job postings from the Adzuna API across 9 countries (GB, DE, NL, FR, US, CA, ZA, AU, SG) using 6 keyword searches. Results are deduplicated by ID, filtered by title relevance, and sorted newest-first.
+- **Live feed section** — Fetches real job postings from the Adzuna API across 9 countries (GB, DE, NL, FR, US, CA, ZA, AU, SG) using 6 keyword searches, plus the ReliefWeb v2 jobs API (8 keyword queries, NGO/UN/development sector). Results are merged, deduplicated by ID, filtered by title relevance, and sorted newest-first. ReliefWeb results carry a "ReliefWeb" source badge.
 - **Date-range toggle** — Four pill buttons (Any time / Past month / Past week / Past 24 h) re-fetch the feed with a new `max_days_old` parameter.
 - **Target organizations** — 16 curated org career page links grouped into three categories.
 - **Keywords section** — 16 click-to-copy keyword pills for use on other job boards.
@@ -35,6 +35,14 @@ Giuseppe's professional profile: summary, key strengths (8 cards), selected expe
 - Credentials are embedded directly in `jobs.html` (the repo is public, the API is read-only job search)
 - **Free tier limit:** 250 API calls/day — the page makes ~18 calls per load (9 searches × up to 2 countries per keyword), supporting ~13 full loads/day
 - **Title relevance filter:** After fetching, results are filtered client-side — only jobs whose title contains forestry/restoration terms are shown. The filter list is in the `isRelevant()` function in `jobs.html`
+
+---
+
+## ReliefWeb API
+
+- Registered appname: `dalbosco-jobsearch-x7k4sDESTKw8Q9CBJBuv` (approved 2026-06-10, stored in `RELIEFWEB_APPNAME` in `jobs.html`)
+- POST to `https://api.reliefweb.int/v2/jobs` — open jobs only, sorted by date, 10 results per query
+- No daily-limit concerns comparable to Adzuna; the API is free and read-only
 
 ---
 
